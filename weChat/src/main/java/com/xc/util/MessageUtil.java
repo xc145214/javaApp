@@ -180,4 +180,46 @@ public class MessageUtil {
         xstream.alias("item", new Article().getClass());
         return xstream.toXML(newsMessage);
     }
+
+
+
+    /**
+     * 主菜单
+     * @return
+     */
+    public static String menuText(){
+        StringBuffer sb = new StringBuffer();
+        sb.append("欢迎您的关注，请按照菜单提示进行操作：\n\n");
+        sb.append("1. 课程介绍\n");
+        sb.append("2. 慕课网介绍\n");
+        sb.append("回复？ 调出此菜单。");
+        return sb.toString();
+    }
+
+    /**
+     * 第一个菜单
+     * @return
+     */
+    public static String firstMenu(){
+        StringBuffer sb = new StringBuffer();
+        sb.append("本套课程介绍微信公众号开发：公众号介绍、开发模式、编辑模式等");
+        return sb.toString();
+    }
+
+    public static String secondMenu(){
+        StringBuffer sb = new StringBuffer();
+        sb.append("SegmentFault 是一家中文的开发者社区及媒体。最初的产品原型来自于国外最大的程序员问答社区 StackOverflow,但其产品形态经过一年多的发展,已经有问答、博客、活动");
+        return sb.toString();
+    }
+
+    public static String initText(String toUserName,String fromUserName,String content){
+        System.out.println("here");
+        TextMessage textMessage = new TextMessage();
+        textMessage.setFromUserName(toUserName);
+        textMessage.setToUserName(fromUserName);
+        textMessage.setMsgType(MessageUtil.REQ_MESSAGE_TYPE_TEXT);
+        textMessage.setCreateTime(new Date().getTime());
+        textMessage.setContent("您发送的消息是：" + content);
+        return textMessageToXml(textMessage);
+    }
 }

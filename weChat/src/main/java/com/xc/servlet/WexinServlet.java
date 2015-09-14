@@ -43,26 +43,34 @@ public class WexinServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
         PrintWriter out = resp.getWriter();
         try {
             Map<String, String> map = MessageUtil.parseXml(req);
             String fromUserName = map.get("FromUserName");
             String toUserName = map.get("ToUserName");
-            String createTime = map.get("CreateTime");
             String msgType = map.get("MsgType");
             String content = map.get("Content");
-            String msgId = map.get("MsgId");
 
             String message = null;
-            if ("text".equals(msgType)) {
-                TextMessage textMessage = new TextMessage();
-                textMessage.setFromUserName(toUserName);
-                textMessage.setToUserName(fromUserName);
-                textMessage.setMsgType("text");
-                textMessage.setCreateTime(new Date().getTime());
-                textMessage.setContent("您发送的消息是：" + content);
-                message = MessageUtil.textMessageToXml(textMessage);
+            if (MessageUtil.REQ_MESSAGE_TYPE_TEXT.equals(msgType)) {
+                if ("1".equals(content)) {
+                    message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.firstMenu());
+                } else if ("2".equals(content)) {
+                    message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.secondMenu());
+                } else if ("?".equals(content) || "？".equals(content)) {
+                    message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
+                } else {
+                    message = MessageUtil.initText(toUserName, fromUserName, content);
+                }
+            } else if (MessageUtil.REQ_MESSAGE_TYPE_EVENT.equals(msgType)) {
+                String eventType = map.get("Event");
+                //关注
+                if (MessageUtil.EVENT_TYPE_SUBSCRIBE.equals(msgType)) {
+                    message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
+                }
             }
+
             out.print(message);
         } catch (Exception e) {
             e.printStackTrace();
